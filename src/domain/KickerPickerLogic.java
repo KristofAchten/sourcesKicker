@@ -15,27 +15,19 @@ public class KickerPickerLogic {
     public static void fillInPositions(@NotNull final KickerPickerModel model) {
         final List<String> players = model.getPlayers();
         final List<String> leftoverPlayers = model.getLeftoverPlayers();
-        final List<JLabel> positions = model.getPositions();
+        final boolean fillUp = leftoverPlayers.isEmpty();
 
         if (players.size() < 4) {
             GUIToolkit.showErrorFrame("Niet genoeg spelers", "Opgelet: niet genoeg spelers ingevuld!");
             return;
         }
 
-        boolean fillerUp = !leftoverPlayers.isEmpty();
-        if (fillerUp) {
-            players.removeAll(leftoverPlayers);
-        }
+        players.removeAll(leftoverPlayers);
+        model.getPositions().forEach(p -> {
+            setRandomFromList(p, leftoverPlayers.isEmpty() ? players : leftoverPlayers);
+        });
 
-        for (JLabel l : positions) {
-            if (!leftoverPlayers.isEmpty()) {
-                setRandomFromList(l, leftoverPlayers);
-            } else {
-                setRandomFromList(l, players);
-            }
-        }
-
-        if (!fillerUp) {
+        if (fillUp) {
             leftoverPlayers.addAll(players);
         }
     }
